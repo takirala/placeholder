@@ -1,4 +1,2 @@
 import 'just/build.just'
-
-default:
-    echo 'Hello, world!'
+import 'just/release.just'
