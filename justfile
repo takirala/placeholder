@@ -1,4 +1,1 @@
-import 'just/build.just'
-
-default:
-    echo 'Hello, world!'
+import 'just/catalog-plugin.just'

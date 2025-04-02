@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: valkey
+  namespace: ${releaseNamespace}
+spec:
+  url: oci://registry-1.docker.io/bitnamicharts/valkey
+  interval: 1m
+  ref:
+    tag: 2.4.7
