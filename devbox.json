@@ -2,7 +2,8 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.0/.schema/devbox.schema.json",
   "packages": [
     "just@latest",
-    "oras@latest"
+    "oras@latest",
+    "git@latest"
   ],
   "shell": {
     "init_hook": [
