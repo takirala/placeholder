@@ -1,0 +1,36 @@
+name: Check Semantic Versioning in Services Folders
+
+on:
+  push:
+    paths:
+      - 'services/**'
+  pull_request:
+    paths:
+      - 'services/**'
+
+jobs:
+  check_semver:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v2
+
+    - name: Check semantic versioning in folder names
+      run: |
+        is_semver() {
+          local version=$1
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+        }
+
+        for service_dir in services/*/*; do
+          if [ -d "$service_dir" ]; then
+            folder_name=$(basename "$service_dir")
+            
+            if ! is_semver "$folder_name"; then
+              echo "ERROR: Folder name '$folder_name' is not a valid semantic version!"
+              exit 1
+            fi
+          fi
+        done
+
+        echo "All folder names are valid semantic versions."
