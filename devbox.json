@@ -1,6 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.0/.schema/devbox.schema.json",
   "packages": [
+    "git@latest",
+    "gettext@latest",
     "just@latest",
     "oras@latest",
     "git@latest"

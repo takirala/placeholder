@@ -1,0 +1,21 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+kind: Kustomization
+metadata:
+  name: valkey-helmrelease
+  namespace: ${releaseNamespace}
+spec:
+  interval: 5m
+  path: ./services/valkey/2.4.7/helmrelease
+  postBuild:
+    substitute:
+      releaseNamespace: ${releaseNamespace}
+      workspaceNamespace: ${workspaceNamespace}
+#      projectNamespace: ${projectNamespace}
+  prune: true
+  retryInterval: 1m
+  sourceRef:
+    kind: OCIRepository
+    name: ${buildSubstitute_ociRepositoryName}
+    namespace: ${releaseNamespace}
+  timeout: 1m
+  wait: true

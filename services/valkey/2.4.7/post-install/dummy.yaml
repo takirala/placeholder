@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: netshoot
+spec:
+  containers:
+    - name: busybox
+      image: nicolaka/netshoot
+      command:
+        - sleep
+        - "3600"
+      imagePullPolicy: IfNotPresent
