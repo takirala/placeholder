@@ -1,2 +1,1 @@
-import 'just/build.just'
-import 'just/release.just'
+import 'just/catalog-plugin.just'

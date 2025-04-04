@@ -1,0 +1,11 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: valkey
+  namespace: ${releaseNamespace}
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: valkey
+    namespace: ${releaseNamespace}
+  interval: 5m
