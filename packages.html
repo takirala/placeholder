@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NKP Marketplace</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #007bff, #6610f2);
+      color: white;
+      text-align: center;
+      padding: 2em 0;
+      margin-bottom: 2em;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2em;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-image {
+      padding: 1em;
+      text-align: center;
+      position: relative;
+    }
+
+    .card-image img {
+      max-width: 80px;
+      max-height: 80px;
+      border-radius: 10px;
+    }
+
+    .card-logo {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      max-width: 20px;
+      max-height: 20px;
+    }
+
+    .card-content {
+      padding: 1em;
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: 1.2em;
+      font-weight: 600;
+      margin-bottom: 0.5em;
+      color: #343a40;
+    }
+
+    .card-details {
+      font-size: 0.9em;
+      color: #6c757d;
+    }
+
+    .card-details p {
+      margin: 0.3em 0;
+    }
+
+    .card-footer {
+      padding: 1em;
+      border-top: 1px solid #dee2e6;
+      text-align: center;
+    }
+
+    .card-footer a {
+      background-color: #007bff;
+      color: white;
+      padding: 0.5em 1em;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      margin: 0.25em;
+    }
+
+    .card-footer a:hover {
+      background-color: #0056b3;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #installInstructions {
+      font-size: 1em;
+      color: #343a40;
+      line-height: 1.5;
+    }
+
+    #installInstructions ol {
+      padding-left: 2em;
+      margin-bottom: 1em;
+    }
+
+    #installInstructions li {
+      margin-bottom: 0.5em;
+    }
+
+    #installInstructions pre {
+      background-color: #e9ecef;
+      padding: 1em;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: monospace;
+      margin-bottom: 1em;
+      font-size: 0.9em;
+      border: 1px solid #ced4da;
+    }
+
+    #installInstructions code {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+  </style>
+</head>
+<body>
+<header>
+  <h1>NKP Marketplace</h1>
+  <p>Explore our latest applications and services.</p>
+</header>
+
+<div class="container">
+  <div class="grid-container" id="appGrid">
+  </div>
+</div>
+
+<div id="installModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div id="installInstructions"></div>
+  </div>
+</div>
+
+<script>
+  const appData = [
+    {
+      name: "Valkey",
+      url: "https://valkey.io/",
+      icon: "https://valkey.io/favicon.svg",
+      size: "120 MB",
+      lastModified: randomDate(2025),
+      logo: "https://www.logo.wine/a/logo/Kubernetes/Kubernetes-Logo.wine.svg",
+      version: "2.4.7"
+    },
+    {
+      name: "Gitlab",
+      url: "https://about.gitlab.com/",
+      icon: "https://about.gitlab.com/images/press/gitlab-logo.svg",
+      size: "95 MB",
+      lastModified: randomDate(2025),
+      logo: "https://www.logo.wine/a/logo/Kubernetes/Kubernetes-Logo.wine.svg",
+      version: "1.2.3"
+    },
+    {
+      name: "NDK",
+      url: "https://www.nutanix.com/products/data-services-for-kubernetes",
+      icon: "https://www.nutanix.com/etc.clientlibs/settings/wcm/designs/nutanix/clientlibs/images/favicon.ico",
+      size: "150 MB",
+      lastModified: randomDate(2025),
+      logo: "https://www.logo.wine/a/logo/Kubernetes/Kubernetes-Logo.wine.svg",
+      version: "1.2.3"
+    },
+    {
+      name: "Nutanix Files",
+      url: "https://www.nutanix.com/products/files",
+      icon: "https://www.nutanix.com/etc.clientlibs/settings/wcm/designs/nutanix/clientlibs/images/favicon.ico",
+      size: "110 MB",
+      lastModified: randomDate(2025),
+      logo: "https://www.logo.wine/a/logo/Kubernetes/Kubernetes-Logo.wine.svg",
+      version: "1.2.3"
+    },
+    {
+      name: "Nutanix Flow",
+      url: "https://www.nutanix.com/products/flow",
+      icon: "https://www.nutanix.com/etc.clientlibs/settings/wcm/designs/nutanix/clientlibs/images/favicon.ico",
+      size: "130 MB",
+      lastModified: randomDate(2025),
+      logo: "https://www.logo.wine/a/logo/Kubernetes/Kubernetes-Logo.wine.svg",
+      version: "1.2.3"
+    },
+  ];
+
+  function randomDate(year) {
+    const startDate = new Date(year, 0, 1).getTime();
+    const endDate = new Date(year, 11, 31).getTime();
+    const randomTime = startDate + Math.random() * (endDate - startDate);
+    const randomDate = new Date(randomTime);
+    return randomDate.toISOString().split('T')[0];
+  }
+
+  function renderApps(apps) {
+    const appGrid = document.getElementById('appGrid');
+    appGrid.innerHTML = '';
+
+    apps.forEach(app => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      card.innerHTML = `
+                    <div class="card-image">
+                        <img src="${app.icon}" alt="${app.name}">
+                        <img class="card-logo" src="${app.logo}" alt="${app.name} Logo">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${app.name}</h3>
+                        <div class="card-details">
+                            <p>Size: ${app.size}</p>
+                            <p>Last Modified: ${app.lastModified}</p>
+                            <p>Version: ${app.version}</p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="javascript:void(0);" class="install-btn" data-app-name="${app.name}" data-app-version="${app.version}">Install</a>
+                        <a href="${app.url}.tar.gz" target="_blank">Download (.tar.gz)</a>
+                        <a href="${app.name}.sbom.txt" target="_blank">SBOM</a>
+                    </div>
+                `;
+
+      appGrid.appendChild(card);
+    });
+
+    // Add event listeners for install buttons
+    const installButtons = document.querySelectorAll('.install-btn');
+    installButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const appName = this.dataset.appName;
+        const appVersion = this.dataset.appVersion;
+        showInstallInstructions(appName, appVersion);
+      });
+    });
+
+  }
+
+  renderApps(appData);
+
+  function showInstallInstructions(appName, appVersion) {
+    const modal = document.getElementById('installModal');
+    const instructionsDiv = document.getElementById('installInstructions');
+
+    let appNameLowerCase = appName;
+    if (appName === "Valkey") {
+      appNameLowerCase = "valkey";
+    }
+
+    const rfc1123AppVersion = appVersion.replace(/\./g, '-');
+
+    instructionsDiv.innerHTML = `
+                <p><strong>Installation Instructions for ${appName} (Version: ${appVersion}):</strong></p>
+                <ol>
+                    <li>
+                        First, create an OCI source using Flux:
+                        <pre><code>flux create source oci ${appNameLowerCase}-${rfc1123AppVersion} --namespace kommander --label "kommander.d2iq.io/ocirepository-type=catalog" --url oci://docker.io/takirala/${appNameLowerCase} --tag ${appVersion}</code></pre>
+                    </li>
+                    <li>
+                        Then, apply the following YAML using <code>kubectl</code>:
+                        <pre><code>cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: apps.kommander.d2iq.io/v1alpha3
+kind: AppDeployment
+metadata:
+  name: ${appNameLowerCase}-oci
+  namespace: kommander
+spec:
+  appRef:
+    kind: App
+    name: ${appNameLowerCase}-${appVersion}
+EOF
+</code></pre>
+                    </li>
+                </ol>
+            `;
+
+    modal.style.display = 'block';
+
+    const closeButton = document.querySelector('.close');
+    closeButton.addEventListener('click', function() {
+      modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  }
+
+</script>
+</body>
+</html>
