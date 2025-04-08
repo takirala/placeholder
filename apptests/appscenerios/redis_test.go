@@ -34,13 +34,13 @@ var _ = Describe("redis Tests", Ordered, Label("redis"), func() {
 	Describe("Installing redis", Ordered, Label("install"), func() {
 
 		var (
-			cm redis
+			rs redis
 			hr *fluxhelmv2beta2.HelmRelease
 		)
 
 		It("should install successfully with default config", func() {
-			cm = redis{}
-			err := cm.Install(ctx, env)
+			rs = redis{}
+			err := rs.Install(ctx, env)
 			Expect(err).To(BeNil())
 
 			hr = &fluxhelmv2beta2.HelmRelease{
@@ -49,7 +49,7 @@ var _ = Describe("redis Tests", Ordered, Label("redis"), func() {
 					APIVersion: fluxhelmv2beta2.GroupVersion.Version,
 				},
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      cm.Name(),
+					Name:      rs.Name(),
 					Namespace: kommanderNamespace,
 				},
 			}

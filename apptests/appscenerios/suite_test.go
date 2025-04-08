@@ -25,7 +25,7 @@ var (
 	network              *docker.NetworkResource
 	k8sClient            genericClient.Client
 	restClientV1Pods     rest.Interface
-	upgradeKAppsRepoPath string
+	upgradeAppsRepoPath string
 )
 
 var _ = BeforeSuite(func() {
@@ -34,16 +34,14 @@ var _ = BeforeSuite(func() {
 	network, err = kind.EnsureDockerNetworkExist(ctx, "", false)
 	Expect(err).ShouldNot(HaveOccurred())
 
-	Expect(err).ShouldNot(HaveOccurred())
-
 	env = &environment.Env{
 		Network: network,
 	}
 
-	// Get the path to upgrade k-apps repository from the environment variable
-	upgradeKAppsRepoPath = os.Getenv(upgradeKappsRepoPathEnv)
-	if upgradeKAppsRepoPath == "" {
-		upgradeKAppsRepoPath = defaultUpgradeKAppsRepoPath
+	// Get the path to upgrade apps repository from the environment variable | (this is where the old version of apps are stored)
+	upgradeAppsRepoPath = os.Getenv(upgradeAppsRepoPathEnv)
+	if upgradeAppsRepoPath == "" {
+		upgradeAppsRepoPath = defaultUpgradeAppsRepoPath
 	}
 })
 
