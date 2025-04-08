@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/environment"
 )
 
@@ -30,6 +31,39 @@ func absolutePathTo(application string) (string, error) {
 	}
 
 	dir, err := filepath.Abs(filepath.Join(wd, base, "services", application))
+	if err != nil {
+		return "", err
+	}
+
+	// filepath.Glob returns a sorted slice of matching paths
+	matches, err := filepath.Glob(filepath.Join(dir, "*"))
+	if err != nil {
+		return "", err
+	}
+
+	if len(matches) == 0 {
+		return "", fmt.Errorf(
+			"no application directory found for %s in the given path:%s",
+			application, dir)
+	}
+
+	return matches[0], nil
+}
+
+func getkAppsUpgradePath(application string) (string, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	// Check that the app repo has been cloned
+	_, err = os.Stat(filepath.Join(wd, "../", upgradeKAppsRepoPath))
+	if err != nil {
+		return "", fmt.Errorf("kommander-applications upgrade directory not found: %w", err)
+	}
+
+	// Get the absolute path to the application directory
+	dir, err := filepath.Abs(filepath.Join(wd, "../", upgradeKAppsRepoPath, "services", application))
 	if err != nil {
 		return "", err
 	}
