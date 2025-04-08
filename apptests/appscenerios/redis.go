@@ -57,3 +57,31 @@ func (r redis) install(ctx context.Context, env *environment.Env, appPath string
 
 	return err
 }
+
+func (r redis) InstallPreviousVersion(ctx context.Context, env *environment.Env) error {
+	appPath, err := getkAppsUpgradePath(r.Name())
+	if err != nil {
+		return err
+	}
+
+	err = r.install(ctx, env, appPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r redis) Upgrade(ctx context.Context, env *environment.Env) error {
+	appPath, err := absolutePathTo(r.Name())
+	if err != nil {
+		return err
+	}
+
+	err = r.install(ctx, env, appPath)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
