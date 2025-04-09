@@ -2,6 +2,7 @@ package appscenarios
 
 import (
 	"context"
+	"flag"
 	"os"
 	"testing"
 
@@ -20,13 +21,21 @@ import (
 )
 
 var (
-	env                  *environment.Env
-	ctx                  context.Context
-	network              *docker.NetworkResource
-	k8sClient            genericClient.Client
-	restClientV1Pods     rest.Interface
+	env                 *environment.Env
+	ctx                 context.Context
+	network             *docker.NetworkResource
+	k8sClient           genericClient.Client
+	restClientV1Pods    rest.Interface
 	upgradeAppsRepoPath string
+	appName             string
+	appVersion          string
 )
+
+func init() {
+	// Define custom flags
+	flag.StringVar(&appName, "app-name", "", "The name of the application")
+	flag.StringVar(&appVersion, "app-version", "", "The version of the application")
+}
 
 var _ = BeforeSuite(func() {
 	ctx = context.Background()

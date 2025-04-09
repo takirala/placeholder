@@ -14,6 +14,11 @@ import (
 )
 
 var _ = Describe("redis Tests", Ordered, Label("redis"), func() {
+	// Print values passed from CLI flags
+	fmt.Printf("=== App Name: %s\n", appName)
+	fmt.Printf("=== App Version: %s\n", appVersion)
+
+
 	BeforeEach(OncePerOrdered, func() {
 		err := SetupKindCluster()
 		Expect(err).To(BeNil())
