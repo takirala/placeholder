@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/environment"
 )
 
@@ -14,7 +15,7 @@ type AppScenario interface {
 }
 
 // absolutePathTo returns the absolute path to the given application directory.
-func absolutePathTo(application string) (string, error) {
+func absolutePathTo(application string, appVersion string) (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return "", err
@@ -34,6 +35,14 @@ func absolutePathTo(application string) (string, error) {
 		return "", err
 	}
 
+	if len(appVersion) > 0 {
+		pathToApp := dir + "/" + appVersion
+		if !checkIfPathIsValid(pathToApp) {
+			return "", fmt.Errorf("no application directory found for app: %s of version: %s", application, appVersion)
+		}
+		return pathToApp, nil
+	}
+
 	// filepath.Glob returns a sorted slice of matching paths
 	matches, err := filepath.Glob(filepath.Join(dir, "*"))
 	if err != nil {
@@ -47,4 +56,11 @@ func absolutePathTo(application string) (string, error) {
 	}
 
 	return matches[0], nil
+}
+
+func checkIfPathIsValid(absPathToApp string) bool {
+	if _, err := os.Stat(absPathToApp); err == nil {
+		return true
+	}
+	return false
 }

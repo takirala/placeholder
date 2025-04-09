@@ -2,6 +2,7 @@ package appscenarios
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/environment"
@@ -13,11 +14,12 @@ func (r redis) Name() string {
 	return "redis"
 }
 
-func (r redis) Install(ctx context.Context, env *environment.Env) error {
-	appPath, err := absolutePathTo(r.Name())
+func (r redis) Install(ctx context.Context, env *environment.Env, appVersion string) error {
+	appPath, err := absolutePathTo(r.Name(), appVersion)
 	if err != nil {
 		return err
 	}
+	fmt.Println("=== appPath : ", appPath)
 
 	err = r.install(ctx, env, appPath)
 	if err != nil {

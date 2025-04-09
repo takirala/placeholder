@@ -45,7 +45,7 @@ var _ = Describe("redis Tests", Ordered, Label("redis"), func() {
 
 		It("should install successfully with default config", func() {
 			rs = redis{}
-			err := rs.Install(ctx, env)
+			err := rs.Install(ctx, env, appVersion)
 			Expect(err).To(BeNil())
 
 			hr = &fluxhelmv2beta2.HelmRelease{
