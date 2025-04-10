@@ -6,6 +6,6 @@ const (
 	kommanderNamespace = "kommander"
 	pollInterval       = 2 * time.Second
 	// Environment variables
-	upgradeAppsRepoPathEnv = "UPGRADE_KAPPS_REPO_PATH"
+	upgradeAppsRepoPathEnv = "UPGRADE_APPS_REPO_PATH"
 	defaultUpgradeAppsRepoPath = ".work/upgrade/applications"
 )
