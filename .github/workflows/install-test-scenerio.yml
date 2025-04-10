@@ -1,0 +1,62 @@
+name: Application Specific Test - Install
+
+on:
+  workflow_call:
+    inputs:
+      app_version_pair:
+        description: 'The is used to target an application via ginkgo label and app version. eg: redis:20.11.4, here redis will be used as ginkgo label to filter'
+        required: true
+        type: string
+      version_ref:
+        description: 'The git branch or tag to run install test.'
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      app_version_pair:
+        description: 'The is used to target an application via ginkgo label and app version. eg: redis:20.11.4, here redis will be used as ginkgo label to filter'
+        required: true
+        type: string
+      version_ref:
+        description: 'The git branch or tag to run install test.'
+        required: true
+        type: string
+
+jobs:
+  install-test-scenerio:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version_ref }}
+
+      - name: Get app name and version to test
+        run: |
+          app_version_pair="${{ inputs.app_version_pair }}"
+
+          APP_NAME=$(echo "$app_version_pair" | cut -d':' -f1)
+          APP_VERSION=$(echo "$app_version_pair" | cut -d':' -f2)
+
+          echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'apptests/go.mod'
+      
+      - name: Install Ginkgo
+        working-directory: apptests
+        run: go install github.com/onsi/ginkgo/v2/ginkgo
+
+      - name: Run install Test
+        working-directory: apptests
+        env:
+          SKIP_CLUSTER_TEARDOWN: "true"
+        run: |
+          ginkgo --v -r --label-filter="install && $APP_NAME" -- -app-name="$APP_NAME" -app-version="$APP_VERSION"
+
+     
