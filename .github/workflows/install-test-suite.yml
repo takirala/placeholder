@@ -1,0 +1,62 @@
+name: Identify Changed Applications and Trigger Parallel Tests
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+
+jobs:
+  identify-changes:
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'test-install') &&
+      github.event.pull_request.changed_files > 0
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Get list of changed files
+      id: files
+      run: |
+        changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '^services/')
+        echo "::set-output name=changed_files::$(echo "$changed_files" | tr '\n' ',')"
+
+    - name: Parse changed applications and versions
+      id: parse-applications
+      run: |
+        changed_files="${{ steps.files.outputs.changed_files }}"
+
+        IFS=',' read -ra files <<< "$changed_files"
+        declare -A app_versions
+
+        app_version_list=()
+
+        # Loop through the files and process each one
+        for file in "${files[@]}"; do
+            app_dir=$(echo "$file" | cut -d'/' -f2)
+            version_dir=$(echo "$file" | cut -d'/' -f3)
+            app_version_pair="$app_dir:$version_dir"
+            app_version_list+=("$app_version_pair")
+        done
+
+        unique_app_version_list=$(echo "${app_version_list[@]}" | tr ' ' '\n' | sort | uniq | tr '\n' ' ')
+        echo "$unique_app_version_list"
+
+        echo "::set-output name=matrix::$(echo $unique_app_version_list)"
+  
+  trigger-individual-install-test:
+    needs: identify-changes
+    uses: ./.github/workflows/install-test-scenerio.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        app_version: ${{ fromJson(needs.identify-changes.outputs.matrix) }}
+    with:
+      version_ref: ${{ github.event.pull_request.head.ref }}
+      app_version_pair: ${{ matrix.app_version }}
+    secrets: inherit

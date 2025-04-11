@@ -1,0 +1,3 @@
+apiVersion: metadata.catalog.nkp.io/v1alpha1
+spec:
+  minNKPVersion: ">=2.16.0"
