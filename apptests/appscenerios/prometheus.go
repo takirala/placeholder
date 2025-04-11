@@ -2,7 +2,6 @@ package appscenarios
 
 import (
 	"context"
-	"fmt"
 	"path/filepath"
 
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/environment"
