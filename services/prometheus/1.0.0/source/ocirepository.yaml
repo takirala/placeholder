@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: prometheus
+  namespace: ${releaseNamespace}
+spec:
+  interval: 1m
+  url: oci://ghcr.io/prometheus-community/charts/prometheus
+  ref:
+    tag: 27.8.0
