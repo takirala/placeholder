@@ -9,10 +9,8 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/docker"
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/environment"
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/flux"
-	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/kind"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/client-go/rest"
@@ -23,7 +21,6 @@ import (
 var (
 	env                 *environment.Env
 	ctx                 context.Context
-	network             *docker.NetworkResource
 	k8sClient           genericClient.Client
 	restClientV1Pods    rest.Interface
 	upgradeAppsRepoPath string
@@ -39,13 +36,8 @@ func init() {
 
 var _ = BeforeSuite(func() {
 	ctx = context.Background()
-	var err error
-	network, err = kind.EnsureDockerNetworkExist(ctx, "", false)
-	Expect(err).ShouldNot(HaveOccurred())
 
-	env = &environment.Env{
-		Network: network,
-	}
+	env = &environment.Env{}
 
 	// Get the path to upgrade apps repository from the environment variable | (this is where the old version of apps are stored)
 	upgradeAppsRepoPath = os.Getenv(upgradeAppsRepoPathEnv)

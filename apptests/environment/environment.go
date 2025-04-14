@@ -13,7 +13,6 @@ import (
 	"github.com/fluxcd/flux2/v2/pkg/manifestgen"
 	runclient "github.com/fluxcd/pkg/runtime/client"
 	typedclient "github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/client"
-	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/docker"
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/flux"
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/kind"
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/kustomize"
@@ -42,7 +41,6 @@ type Env struct {
 	K8sClient *typedclient.Client
 	// Cluster is a dedicated instance of a kind cluster created for running an application specific test.
 	Cluster *kind.Cluster
-	Network *docker.NetworkResource
 }
 
 // Provision creates and configures the environment for application specific testings.
@@ -55,17 +53,6 @@ func (e *Env) Provision(ctx context.Context) error {
 	}
 	e.SetK8sClient(k8sClient)
 	e.SetCluster(cluster)
-	// install calico CNI
-	err = e.ApplyYAML(ctx, "../environment/calico.yaml", nil)
-	if err != nil {
-		return err
-	}
-
-	subnet, err := e.Network.Subnet()
-	if err != nil {
-		return err
-	}
-	_ = InstallMetallb(ctx, e.Cluster.KubeconfigFilePath(), subnet)
 
 	return nil
 
