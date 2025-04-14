@@ -1,0 +1,55 @@
+name: Application Specific Test - Upgrade
+
+on:
+    workflow_call:
+      inputs:
+        app_name:
+            description: 'The is used to target an application via ginkgo label and app version. eg: redis:20.11.4, here redis will be used as ginkgo label to filter'
+            required: true
+            type: string
+        version_ref:
+            description: 'The git branch or tag to run install test.'
+            required: true
+            type: string
+    workflow_dispatch:
+      inputs:
+        app_name:
+            description: 'The is used to target an application via ginkgo label and app version. eg: redis:20.11.4, here redis will be used as ginkgo label to filter'
+            required: true
+            type: string
+        version_ref:
+            description: 'The git branch or tag to run install test.'
+            required: true
+            type: string
+      
+jobs:
+  upgrade-test-scenerio:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version_ref }}
+
+      - name: Get application anme
+        run: |
+          app_name="${{ inputs.app_name }}"
+          echo "APP_NAME=$app_name" >> $GITHUB_ENV
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+           go-version-file: 'apptests/go.mod'
+
+      - name: Install Ginkgo
+        working-directory: apptests
+        run: go install github.com/onsi/ginkgo/v2/ginkgo
+
+      - name: Run upgrade Test
+        working-directory: apptests
+        env:
+          SKIP_CLUSTER_TEARDOWN: "true"
+        run: |
+          ginkgo --v -r --label-filter="upgrade && $APP_NAME"
