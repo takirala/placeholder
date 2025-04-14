@@ -55,7 +55,7 @@ func absolutePathTo(application string, appVersion string) (string, error) {
 			application, dir)
 	}
 
-	return matches[0], nil
+	return matches[len(matches)-1], nil
 }
 
 func checkIfPathIsValid(absPathToApp string) bool {
@@ -63,4 +63,46 @@ func checkIfPathIsValid(absPathToApp string) bool {
 		return true
 	}
 	return false
+}
+
+// get one version later from the latest version avaialble for a given application
+func getPrevVAppsUpgradePath(application string) (string, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	// determining the execution path.
+	var base string
+	_, err = os.Stat(filepath.Join(wd, "services"))
+	if os.IsNotExist(err) {
+		base = "../.."
+	} else {
+		base = ""
+	}
+
+	dir, err := filepath.Abs(filepath.Join(wd, base, "services", application))
+	if err != nil {
+		return "", err
+	}
+
+	// filepath.Glob returns a sorted slice of matching paths
+	matches, err := filepath.Glob(filepath.Join(dir, "*"))
+	if err != nil {
+		return "", err
+	}
+
+	if len(matches) == 0 {
+		return "", fmt.Errorf(
+			"no application directory found for %s in the given path:%s",
+			application, dir)
+	}
+
+	if len(matches) < 2 {
+		return "", fmt.Errorf(
+			"no old version found for the application: %s",
+			application)
+	}
+
+	return matches[ len(matches)-2 ], nil
 }

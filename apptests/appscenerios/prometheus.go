@@ -2,6 +2,7 @@ package appscenarios
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 
 	"github.com/nutanix-cloud-native/nkp-nutanix-product-catalog/apptests/environment"
@@ -43,6 +44,36 @@ func (r prometheus) install(ctx context.Context, env *environment.Env, appPath s
 	err = env.ApplyKustomizations(ctx, helmreleasePath, map[string]string{
 		"releaseNamespace": kommanderNamespace,
 	})
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (pr prometheus) InstallPreviousVersion(ctx context.Context, env *environment.Env) error {
+	appPath, err := getPrevVAppsUpgradePath(pr.Name())
+	if err != nil {
+		return err
+	}
+	fmt.Printf("==prev version path : %s", appPath)
+
+	err = pr.install(ctx, env, appPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (pr prometheus) Upgrade(ctx context.Context, env *environment.Env) error {
+	appPath, err := absolutePathTo(pr.Name(), "")
+	if err != nil {
+		return err
+	}
+	fmt.Printf("==version path to upgrade : %s", appPath)
+
+	err = pr.install(ctx, env, appPath)
 	if err != nil {
 		return err
 	}
